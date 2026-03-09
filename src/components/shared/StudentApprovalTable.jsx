@@ -1,35 +1,49 @@
 import { DataGrid } from "@mui/x-data-grid";
-import { Button } from "@mui/material";
+import { Button, Box, useMediaQuery, useTheme } from "@mui/material";
+import { useMemo } from "react";
 
-const StudentApprovalTable = ({ students, onApprove }) => {
+const StudentApprovalTable = ({ students = [], onApprove }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const columns = [
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "email", headerName: "Email", flex: 2 },
+  const columns = useMemo(() => [
+    { field: "name", headerName: "Name", flex: 1, minWidth: 120 },
+    { field: "email", headerName: "Email", flex: 2, minWidth: 200 },
     {
       field: "actions",
-      flex: 1,
       headerName: "Actions",
-      renderCell: (params) => {
-        return <Button
+      sortable: false,
+      minWidth: isMobile ? 120 : 160,
+      renderCell: (params) => (
+        <Button
+          size="small"
           variant="contained"
-          onClick={() => onApprove(params.row.id)}>
+          onClick={() => onApprove?.(params.row.id)}
+        >
           Approve
-        </Button>;
-      }
+        </Button>
+      )
     }
-  ];
+  ], [onApprove, isMobile]);
 
   return (
-    <div style={{ height: 400 }}>
-      <DataGrid rows={students} columns={columns} pageSizeOptions={[10, 25, 50, 100]}
+    <Box sx={{ width: "100%", height: 420 }}>
+      <DataGrid
+        rows={students}
+        columns={columns}
+        getRowId={(row) => row.id}
+        pageSizeOptions={[5, 10, 25]}
+        disableRowSelectionOnClick
         initialState={{
-          pagination: {
-            paginationModel: { pageSize: 10, page: 0 },
-          },
+          pagination: { paginationModel: { pageSize: 10, page: 0 } }
+        }}
+        sx={{
+          borderRadius: 2,
+          boxShadow: 2,
+          fontSize: isMobile ? "12px" : "14px"
         }}
       />
-    </div>
+    </Box>
   );
 };
 

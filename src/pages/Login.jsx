@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Box, Button, TextField, Typography, Paper, Alert, CircularProgress, } from "@mui/material";
-// import { loginUser } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
+import { validateEmail, validateRequired } from "../utils/validators";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -19,7 +19,15 @@ export const Login = () => {
 
   const handleLogin = async () => {
     setErrorMessage("");
+    if (!validateEmail(credentials.email)) {
+      setErrorMessage("Invalid email")
+      return
+    }
 
+    if (!validateRequired(credentials.password)) {
+      setErrorMessage("Password required")
+      return
+    }
     try {
       setIsSubmitting(true);
       await loginUser(credentials.email, credentials.password);

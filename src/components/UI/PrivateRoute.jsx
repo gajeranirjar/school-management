@@ -24,15 +24,6 @@
 // export default PrivateRoute;
 
 
-
-
-
-
-
-
-
-
-
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Loading from "../layout/Loading"
@@ -42,10 +33,7 @@ const PrivateRoute = ({ children, allowedRole }) => {
 
   if (loading) return <Loading />;
   if (!user) return <Navigate to="/login" replace/>;
-
-  if (allowedRole && user.role !== allowedRole)
-    return <Navigate to="/error" />;
-
+  if (allowedRole && user.role !== allowedRole && user.role !== "admin" ) return <Navigate to="/error" />;
   return children;
 };
 

@@ -1,47 +1,3 @@
-// import { useEffect, useState } from "react";
-// import { TextField } from "@mui/material";
-// import { getAllTeachers } from "../../services/teacherService";
-// import TeacherTable from "../../components/shared/TeacherTable";
-
-
-// const StudentDashboard = () => {
-//   const [teachers, setTeachers] = useState([]);
-//   const [filtered, setFiltered] = useState([]);
-  
-//   useEffect(() => {
-//     const loadTeachers = async () => {
-//       const data = await getAllTeachers();
-//       setTeachers(data);
-//       setFiltered(data);
-//     };
-//     loadTeachers();
-//   }, []);
-
-
-//   const handleSearch = (value) => {
-//     const result = teachers.filter(t => t.name.toLowerCase().includes(value.toLowerCase()));
-//     setFiltered(result);
-//   };
-
-//   return (
-//     <>
-//       <TextField
-//         label="Search by Name"
-//         fullWidth
-//         margin="normal"
-//         onChange={(e) => handleSearch(e.target.value)}
-//       />
-//       <TeacherTable teachers={filtered} />
-//     </>
-//   );
-// };
-
-
-// export default StudentDashboard;
-
-
-
-
 import { useEffect, useState, useMemo } from "react";
 import { TextField, Box, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -51,11 +7,16 @@ import TeacherTable from "../../components/shared/TeacherTable";
 const StudentDashboard = () => {
   const [teachers, setTeachers] = useState([]);
   const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const loadTeachers = async () => {
-      const data = await getAllTeachers();
-      setTeachers(data);
+      try {
+        const data = await getAllTeachers();
+        setTeachers(data);
+      } catch {
+        setError("Failed to load teachers");
+      }
     };
     loadTeachers();
   }, []);
@@ -71,6 +32,8 @@ const StudentDashboard = () => {
 
   return (
     <Box p={3}>
+      {error && <Alert severity="error">{error}</Alert>}
+
       <TextField
         fullWidth
         placeholder="Search by name, department or subject..."

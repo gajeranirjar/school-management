@@ -28,7 +28,7 @@ const UserDashboard = () => {
       </Paper>
 
       <Grid container spacing={4}>
-        <Grid>
+        <Grid item xs={12} sm={6} md={4}>
           <Paper sx={{ p: 4, borderRadius: 3, width: 250, height: 240 }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <AccessTimeIcon color="primary" />
@@ -48,7 +48,7 @@ const UserDashboard = () => {
           </Paper>
         </Grid>
 
-        <Grid>
+        <Grid item xs={12} sm={6} md={4}>
           <Paper sx={{ p: 4, borderRadius: 3, width: 250, height: 240 }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <MenuBookIcon color="primary" />
@@ -65,7 +65,7 @@ const UserDashboard = () => {
           </Paper>
         </Grid>
 
-        <Grid>
+        <Grid item xs={12} sm={6} md={4}>
           <Paper sx={{ p: 4, borderRadius: 3, width: 250, height: 240 }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <SupportAgentIcon color="primary" />

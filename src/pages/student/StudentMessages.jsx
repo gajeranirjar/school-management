@@ -1,16 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { getMessages } from "../../services/messageService";
-
-import {
-  Box,
-  Typography,
-  CircularProgress,
-  Alert,
-  Paper,
-  Stack,
-  Divider
-} from "@mui/material";
+import { Box, Typography, CircularProgress, Alert, Paper, Stack, Divider } from "@mui/material";
 
 const StudentMessages = () => {
   const { user } = useAuth();
@@ -22,7 +13,10 @@ const StudentMessages = () => {
   const loadMessages = async () => {
     try {
       const data = await getMessages(user.uid);
-      setMessages(data);
+      const sorted = [...data].sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
+      setMessages(sorted);
     } catch {
       setError("Failed to load messages");
     } finally {

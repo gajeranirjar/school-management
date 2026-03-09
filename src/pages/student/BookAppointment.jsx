@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  TextField,
-  MenuItem,
-  Box,
-  Alert,
-  CircularProgress
-} from "@mui/material";
+import { Button, TextField, MenuItem, Box, Alert, CircularProgress, Typography } from "@mui/material";
 import { getAllTeachers } from "../../services/teacherService";
 import { bookAppointment } from "../../services/appointmentService";
 import { useAuth } from "../../context/AuthContext";
+import { validateRequired } from "../../utils/validators";
+import { isFutureDate } from "../../utils/dateUtils";
 
 const BookAppointment = () => {
   const { user } = useAuth();
@@ -17,6 +12,7 @@ const BookAppointment = () => {
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const [form, setForm] = useState({
     teacherId: "",
@@ -28,7 +24,7 @@ const BookAppointment = () => {
     const loadTeachers = async () => {
       try {
         const data = await getAllTeachers();
-        const sorted = data.sort((a, b) => a.name.localeCompare(b.name));
+        const sorted = [...data].sort((a, b) => a.name.localeCompare(b.name));
         setTeachers(sorted);
       } catch {
         setError("Failed to load teachers");
@@ -44,14 +40,19 @@ const BookAppointment = () => {
 
   const handleSubmit = async () => {
     setError("");
+    setSuccess("");
 
-    if (!form.teacherId || !form.date) {
-      setError("Teacher and Date are required");
+    if (!validateRequired(form.teacherId)) {
+      setError("Teacher is required");
       return;
     }
 
-    const selectedDate = new Date(form.date);
-    if (selectedDate < new Date()) {
+    if (!validateRequired(form.date)) {
+      setError("Date is required");
+      return;
+    }
+
+    if (!isFutureDate(form.date)) {
       setError("Appointment must be in the future");
       return;
     }
@@ -60,6 +61,7 @@ const BookAppointment = () => {
       setLoading(true);
 
       await bookAppointment(user.uid, form);
+      setSuccess("Appointment booked successfully");
 
       setForm({
         teacherId: "",
@@ -74,8 +76,12 @@ const BookAppointment = () => {
   };
 
   return (
-    <Box textAlign={'center'} >
+    <Box maxWidth={500} mx="auto" mt={4} >
+      <Typography variant="h5" mb={2}>
+        Book Appointment
+      </Typography>
       {error && <Alert severity="error">{error}</Alert>}
+      {success && <Alert sx={{ mb: 2 }} severity="success">{success}</Alert>}
 
       <TextField
         select
@@ -112,6 +118,8 @@ const BookAppointment = () => {
 
       <Button
         variant="contained"
+        fullWidth
+        sx={{ mt: 2 }}
         disabled={loading}
         onClick={handleSubmit}
       >

@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updatePassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, } from "firebase/auth";
 import { doc, setDoc, getDoc, Timestamp } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import { ROLES } from "../constants/roles";
@@ -23,16 +23,13 @@ export const registerUser = async (name, email, password) => {
 
     await logAction(credential.user.uid, "Student Registered", ROLES.USER);
   } catch (error) {
-    if (credential?.user) {
-      await credential.user.delete();
-    }
+    if (credential?.user) await credential.user.delete();
     if (error.code === "auth/email-already-in-use") {
       throw new Error("This email is already registered");
     }
     throw new Error(error.message || "Registration failed");
   }
 };
-
 
 export const loginUser = async (email, password) => {
   if (!email || !password) {
@@ -51,7 +48,7 @@ export const loginUser = async (email, password) => {
     const userData = userDoc.data();
 
     if (!userData.isActive) {
-      throw new Error("Your account is deleted.");
+      throw new Error("Your account is Disabled.");
     }
 
     await logAction(user.uid, "User Logged In", userData.role);
@@ -64,7 +61,7 @@ export const loginUser = async (email, password) => {
       }
     };
   } catch (error) {
-    throw new Error(error.message || "Invalid email or password");
+    throw new Error(error.message || "Login Failed.");
   }
 };
 
@@ -74,36 +71,36 @@ export const logoutUser = async (uid, role) => {
     await signOut(auth);
     return { success: true };
   } catch (error) {
-    return { success: false, message: error.message };
+    throw new Error(error.message || "Logout failed");
   }
 };
 
-export const updateUserPassword = async (currentPassword, newPassword) => {
-  if (!newPassword || newPassword.length < 6) {
-    throw new Error("Password must be at least 6 characters");
-  }
+// export const updateUserPassword = async (currentPassword, newPassword) => {
+//   if (!newPassword || newPassword.length < 6) {
+//     throw new Error("Password must be at least 6 characters");
+//   }
 
-  const user = auth.currentUser;
+//   const user = auth.currentUser;
 
-  if (!user) {
-    throw new Error("No authenticated user found");
-  }
+//   if (!user) {
+//     throw new Error("No authenticated user.");
+//   }
 
-  try {
-    if (currentPassword) {
-      const credential = EmailAuthProvider.credential(
-        user.email,
-        currentPassword
-      );
-      await reauthenticateWithCredential(user, credential);
-    }
+//   try {
+//     if (currentPassword) {
+//       const credential = EmailAuthProvider.credential(
+//         user.email,
+//         currentPassword
+//       );
+//       await reauthenticateWithCredential(user, credential);
+//     }
 
-    await updatePassword(user, newPassword);
+//     await updatePassword(user, newPassword);
 
-    await logAction(user.uid, "Password Updated", "AUTH");
+//     await logAction(user.uid, "Password Updated", "AUTH");
 
-    return { success: true };
-  } catch (error) {
-    throw new Error(error.message || "Password update failed");
-  }
-};
+//     return { success: true };
+//   } catch (error) {
+//     throw new Error(error.message || "Password update failed");
+//   }
+// };

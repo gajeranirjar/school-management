@@ -1,4 +1,4 @@
-import { createBrowserRouter, createRoutesFromElements, Route, } from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
 
 import AppLayout from "../components/layout/AppLayout";
 import PrivateRoute from "../components/UI/PrivateRoute";
@@ -9,30 +9,29 @@ import { Register } from "../pages/Register";
 import { ErrorPage } from "../pages/ErrorPage";
 
 import AdminDashboard from "../pages/admin/AdminDashboard";
-import StudentDashboard from "../pages/student/StudentDashboard";
-
 import ApproveStudents from "../pages/admin/ApproveStudents";
 import ManageTeachers from "../pages/admin/ManageTeachers";
 
 import TeacherAppointments from "../pages/teacher/TeacherAppointments";
 import TeacherMessages from "../pages/teacher/TeacherMessages";
 
+import StudentDashboard from "../pages/student/StudentDashboard";
 import BookAppointment from "../pages/student/BookAppointment";
 import StudentMessages from "../pages/student/StudentMessages";
+import StudentAppointments from "../pages/student/StudentAppointments";
 
-import { ROLES } from "../constants/roles";
 import UserDashboard from "../pages/UserDashboard";
-import StudentAppointments from "../pages/student/studentAppointments";
+import { ROLES } from "../constants/roles";
 
 const AppRoutes = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<AppLayout />} errorElement={<ErrorPage />}>
       <Route index element={<RoleRedirect />} />
+
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
       <Route path="user" element={<UserDashboard />} />
 
-      {/* ADMIN */}
       <Route
         path="admin"
         element={
@@ -41,6 +40,7 @@ const AppRoutes = createBrowserRouter(
           </PrivateRoute>
         }
       />
+
       <Route
         path="admin/approve-students"
         element={
@@ -49,6 +49,7 @@ const AppRoutes = createBrowserRouter(
           </PrivateRoute>
         }
       />
+
       <Route
         path="admin/manage-teachers"
         element={
@@ -58,7 +59,6 @@ const AppRoutes = createBrowserRouter(
         }
       />
 
-      {/* TEACHER */}
       <Route
         path="teacher"
         element={
@@ -67,6 +67,7 @@ const AppRoutes = createBrowserRouter(
           </PrivateRoute>
         }
       />
+
       <Route
         path="teacher/messages"
         element={
@@ -76,7 +77,6 @@ const AppRoutes = createBrowserRouter(
         }
       />
 
-      {/* STUDENT */}
       <Route
         path="student"
         element={
@@ -85,6 +85,7 @@ const AppRoutes = createBrowserRouter(
           </PrivateRoute>
         }
       />
+
       <Route
         path="student/book-appointment"
         element={
@@ -93,6 +94,7 @@ const AppRoutes = createBrowserRouter(
           </PrivateRoute>
         }
       />
+
       <Route
         path="student/appointment"
         element={
@@ -101,6 +103,7 @@ const AppRoutes = createBrowserRouter(
           </PrivateRoute>
         }
       />
+
       <Route
         path="student/messages"
         element={

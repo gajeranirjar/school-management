@@ -6,14 +6,14 @@ import { db, auth } from "../config/firebase";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    const authState = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
-        setCurrentUser(null);
-        setAuthLoading(false);
+        setUser(null);
+        setLoading(false);
         return;
       }
 
@@ -22,30 +22,29 @@ export const AuthProvider = ({ children }) => {
         const userDoc = await getDoc(userRef);
 
         if (!userDoc.exists() || !userDoc.data()?.isActive) {
-          setCurrentUser(null);
-          setAuthLoading(false);
+          setUser(null);
+          setLoading(false);
           return;
         }
 
-        setCurrentUser({
+        setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           ...userDoc.data()
         });
 
-      } catch (error) {
-        console.error("Failed to load user profile", error);
-        setCurrentUser(null);
+      } catch {
+        setUser(null);
       } finally {
-        setAuthLoading(false);
+        setLoading(false);
       }
     });
 
-    return () => unsubscribe();
+    return () => authState();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user: currentUser, loading: authLoading }}>
+    <AuthContext.Provider value={{ user, loading }}>
       {children}
     </AuthContext.Provider>
   );

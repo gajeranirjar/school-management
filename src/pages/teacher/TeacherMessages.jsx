@@ -1,21 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import {
-  getTeacherMessages,
-  replyMessage
-} from "../../services/messageService";
-
-import {
-  Box,
-  Typography,
-  CircularProgress,
-  Alert,
-  Paper,
-  Stack,
-  Divider,
-  Button,
-  TextField
-} from "@mui/material";
+import { getTeacherMessages, replyMessage } from "../../services/messageService";
+import { Box, Typography, CircularProgress, Alert, Paper, Stack, Divider, Button, TextField } from "@mui/material";
 
 const TeacherMessages = () => {
   const { user } = useAuth();
@@ -42,13 +28,13 @@ const TeacherMessages = () => {
     if (user?.uid) loadMessages();
   }, [user]);
 
-  const handleReply = async () => {
+  const handleReply = async (id) => {
     if (!replyText.trim()) return;
 
     try {
       setSending(true);
 
-      await replyMessage(user.uid, selectedId, replyText);
+      await replyMessage(user.uid, id, replyText.trim());
 
       setReplyText("");
       setSelectedId(null);
@@ -96,7 +82,7 @@ const TeacherMessages = () => {
 
             <Typography>{msg.message}</Typography>
 
-            {msg.teacherReply && (
+            {msg.teacherReply ? (
               <>
                 <Divider sx={{ my: 1 }} />
 
@@ -106,9 +92,7 @@ const TeacherMessages = () => {
 
                 <Typography>{msg.teacherReply}</Typography>
               </>
-            )}
-
-            {!msg.teacherReply && (
+            ) : (
               <>
                 <TextField
                   fullWidth
@@ -125,10 +109,7 @@ const TeacherMessages = () => {
                   variant="contained"
                   sx={{ mt: 1 }}
                   disabled={sending}
-                  onClick={() => {
-                    setSelectedId(msg.id);
-                    handleReply();
-                  }}
+                  onClick={() => handleReply(msg.id)}
                 >
                   Send Reply
                 </Button>

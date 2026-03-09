@@ -39,27 +39,9 @@ const TeacherTable = ({ teachers = [], onEdit, onDelete, isAction }) => {
 
   const columns = useMemo(() => {
     const base = [
-      {
-        field: "name",
-        headerName: "Name",
-        flex: 1,
-        minWidth: isMobile ? 50 : 120,
-        sortable: true
-      },
-      {
-        field: "department",
-        headerName: "Department",
-        flex: 1,
-        minWidth: isMobile ? 50 : 120,
-        sortable: true
-      },
-      {
-        field: "subject",
-        headerName: "Subject",
-        flex: 1,
-        minWidth: isMobile ? 40 : 120,
-        sortable: true
-      }
+      { field: "name", headerName: "Name", flex: 1, minWidth: isMobile ? 50 : 120, sortable: true },
+      { field: "department", headerName: "Department", flex: 1, minWidth: isMobile ? 50 : 120, sortable: true },
+      { field: "subject", headerName: "Subject", flex: 1, minWidth: isMobile ? 40 : 120, sortable: true }
     ];
 
     if (isAction) {

@@ -2,13 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { getStudentAppointments } from "../../services/appointmentService";
 import AppointmentTable from "../../components/shared/AppointmentTable";
-
-import {
-    Box,
-    Typography,
-    CircularProgress,
-    Alert
-} from "@mui/material";
+import { Box, Typography, CircularProgress, Alert } from "@mui/material";
+import { ROLES } from "../../constants/roles";
 
 const StudentAppointments = () => {
     const { user } = useAuth();
@@ -23,7 +18,10 @@ const StudentAppointments = () => {
             setError("");
 
             const data = await getStudentAppointments(user.uid);
-            setAppointments(data);
+            const sorted = [...data].sort(
+                (a, b) => new Date(b.date) - new Date(a.date)
+            );
+            setAppointments(sorted);
         } catch {
             setError("Failed to load appointments");
         } finally {
@@ -32,9 +30,7 @@ const StudentAppointments = () => {
     };
 
     useEffect(() => {
-        if (user?.uid) {
-            loadAppointments();
-        }
+        if (user?.uid) loadAppointments();
     }, [user]);
 
     if (loading)
@@ -59,7 +55,7 @@ const StudentAppointments = () => {
 
             <AppointmentTable
                 appointments={appointments}
-                role="student"
+                role={ROLES.STUDENT}
             />
         </Box>
     );

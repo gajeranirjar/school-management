@@ -90,6 +90,7 @@ export const Register = () => {
           label="Full Name"
           fullWidth
           margin="normal"
+          autoComplete="off"
           value={form.name}
           onChange={handleChange}
           error={!!errors.name}
@@ -99,6 +100,7 @@ export const Register = () => {
         <TextField
           name="email"
           label="Email"
+          autoComplete="off"
           fullWidth
           margin="normal"
           value={form.email}
@@ -110,6 +112,7 @@ export const Register = () => {
         <TextField
           name="password"
           label="Password"
+          autoComplete="off"
           type="password"
           fullWidth
           margin="normal"

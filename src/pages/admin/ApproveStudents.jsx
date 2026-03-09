@@ -9,8 +9,12 @@ const ApproveStudents = () => {
 
   useEffect(() => {
     const loadStudents = async () => {
-      const data = await getPendingStudents();
-      setStudents(data);
+      try {
+        const data = await getPendingStudents();
+        setStudents(data);
+      } catch {
+        console.error("Failed loading students");
+      }
     };
     loadStudents();
   }, []);

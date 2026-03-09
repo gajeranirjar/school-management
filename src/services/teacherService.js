@@ -1,15 +1,5 @@
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-  serverTimestamp,
-  setDoc
-} from "firebase/firestore";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, } from "firebase/auth";
-import { db, auth } from "../config/firebase";
+import { collection, doc, getDocs, query, updateDoc, where, serverTimestamp } from "firebase/firestore";
+import { db } from "../config/firebase";
 import { logAction } from "./logService";
 import { ROLES } from "../constants/roles";
 
@@ -22,49 +12,21 @@ export const getAllTeachers = async () => {
     where("isActive", "==", true)
   );
 
-  const snapshot = await getDocs(q);
+  const result = await getDocs(q);
 
-  return snapshot.docs.map((doc) => ({
+  return result.docs.map((doc) => ({
     id: doc.id,
     ...doc.data()
   }));
 };
 
-// export const updateUserRole = async (adminId, userId, newRole) => {
-//   await updateDoc(doc(db, "users", userId), {
-//     role: newRole
-//   });
-
-//   await logAction(adminId, "Role Updated", newRole);
-// };
-
-export const addTeacher = async (adminEmail, adminPassword, teacherData) => {
-  const { email, password, name, department, subject } = teacherData;
-  const credential = await createUserWithEmailAndPassword(auth,email,password);
-
-  await setDoc(doc(db, "users", credential.user.uid), {
-    name,
-    email,
-    department,
-    subject,
-    role: ROLES.TEACHER,
-    isActive: true,
-    createdAt: serverTimestamp()
-  });
-
-  await logAction(credential.user.uid, "Teacher Account Created", ROLES.TEACHER);
-
-  await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
-
-};
-
-export const updateTeacher = async (id , data) => {
+export const updateTeacher = async (id, data) => {
   await updateDoc(doc(db, "users", id), {
     ...data,
     updatedAt: serverTimestamp()
   });
 
-  await logAction(id , "Update Teacher", ROLES.TEACHER);
+  await logAction(id, "Update Teacher", ROLES.TEACHER);
 };
 
 export const deleteTeacher = async (id) => {
