@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, query, where, updateDoc, doc, serverTimestamp, } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where, updateDoc, doc, serverTimestamp, getDoc, } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { logAction } from "./logService";
 import { ROLES } from "../constants/roles";
@@ -74,23 +74,47 @@ export const getTeacherAppointments = async (teacherId) => {
 
 export const approveAppointment = async (teacherId, appointmentId) => {
   try {
-    await updateDoc(doc(db, "appointments", appointmentId), {
+    const ref = doc(db, "appointments", appointmentId);
+    const appointment = await getDoc(ref);
+
+    if (!appointment.exists()) {
+      throw new Error("Appointment not found");
+    }
+
+    const data = appointment.data();
+
+    if (data.teacherId !== teacherId) throw new Error("Unauthorized action");
+    if (data.status !== "pending") throw new Error("Appointment already processed");
+    
+    await updateDoc(ref, {
       status: "approved"
     });
 
     await logAction(teacherId, "Approved Appointment", ROLES.TEACHER);
   } catch (error) {
-    throw new Error(error.message || "Approve appointment failed");
+    throw new Error(error?.message || "Approve appointment failed");
   }
 };
 
 export const cancelAppointment = async (teacherId, appointmentId) => {
   try {
-    await updateDoc(doc(db, "appointments", appointmentId), {
+    const ref = doc(db, "appointments", appointmentId);
+    const appointment = await getDoc(ref);
+
+    if (!appointment.exists()) {
+      throw new Error("Appointment not found");
+    }
+
+    const data = appointment.data();
+
+    if (data.teacherId !== teacherId) throw new Error("Unauthorized action");
+    if (data.status !== "pending") throw new Error("Appointment already processed");
+
+    await updateDoc(ref, {
       status: "cancelled"
     });
     await logAction(teacherId, "Cancelled Appointment", ROLES.TEACHER);
   } catch (error) {
-    throw new Error(error.message || "Cancel appointment failed");
+    throw new Error(error?.message || "Cancel appointment failed");
   }
 };
