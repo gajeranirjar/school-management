@@ -17,8 +17,8 @@ import TeacherMessages from "../pages/teacher/TeacherMessages";
 
 import StudentDashboard from "../pages/student/StudentDashboard";
 import BookAppointment from "../pages/student/BookAppointment";
-import StudentMessages from "../pages/student/StudentMessages";
 import StudentAppointments from "../pages/student/StudentAppointments";
+import StudentMessages from "../pages/student/StudentMessages";
 
 import UserDashboard from "../pages/UserDashboard";
 import { ROLES } from "../constants/roles";
